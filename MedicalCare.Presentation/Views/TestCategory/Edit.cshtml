@@ -1,0 +1,28 @@
+﻿
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@model MedicalCare.Application.Features.TestCategories.UpdateTestCategoryCommand
+
+<div class="content-wrapper">
+    <div class="row">
+        <div class="col-md-6 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Edit Category</h4>
+                    <form asp-action="Edit" method="post">
+                        <input type="hidden" asp-for="Id" />
+                        <div class="form-group">
+                            <label for="Name">Category Name</label>
+                            <input asp-for="Name" class="form-control" id="Name" placeholder="Category Name">
+                        </div>
+                        <br />
+                        <button type="submit" class="btn btn-primary me-2">Update</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
