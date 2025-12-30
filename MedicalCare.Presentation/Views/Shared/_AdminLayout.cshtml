@@ -98,7 +98,7 @@
                     <li class="nav-item nav-category">
                         <span class="nav-link">Navigation</span>
                     </li>
-                    <li class="nav-item menu-items">
+                    <li class="nav-item menu-items" id="Dashboard">
                         <a class="nav-link" href="~/Admin/Dashboard/Index">
                             <span class="menu-icon">
                                 <i class="mdi mdi-speedometer"></i>
@@ -106,22 +106,20 @@
                             <span class="menu-title">Dashboard</span>
                         </a>
                     </li>
-                    <li class="nav-item menu-items">
+                    <li class="nav-item menu-items" id="TestCategory">
                         <a class="nav-link" href="~/Admin/TestCategory/Index">
                             <span class="menu-icon">
                                 <i class="mdi mdi-table-large"></i>
                             </span>
                             <span class="menu-title">TestCategories</span>
-                            <i class="menu-arrow"></i>
                         </a>
                     </li>
-                    <li class="nav-item menu-items">
+                    <li class="nav-item menu-items" id="Tests">
                         <a class="nav-link" href="~/Admin/Tests/Index">
                             <span class="menu-icon">
                                 <i class="mdi mdi-table-large"></i>
                             </span>
                             <span class="menu-title">Tests</span>
-                            <i class="menu-arrow"></i>
                         </a>
                     </li>
                     <li class="nav-item menu-items">
@@ -438,6 +436,24 @@
     <!-- Custom js for this page -->
     <script src="~/assets/js/proBanner.js"></script>
     <script src="~/assets/js/dashboard.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Sabse pehle saari 'active' classes hata dein
+            $('.nav-item').removeClass('active');
+
+            // Current URL check karein
+            var path = window.location.pathname;
+
+            // URL ke base par sahi ID ko active karein
+            if (path.includes("Dashboard")) {
+                $('#Dashboard').addClass('active');
+            } else if (path.includes("TestCategory")) {
+                $('#TestCategory').addClass('active');
+            } else if (path.includes("Tests")) {
+                $('#Tests').addClass('active');
+            }
+        });
+    </script>
     <!-- End custom js for this page -->
 </body>
 </html>

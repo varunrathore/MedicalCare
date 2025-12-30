@@ -22,6 +22,10 @@ namespace MedicalCare.Infrastructure.Repositories
         {
             return await _dbcontext.TestCategories.FindAsync(id);
         }
+        public async Task<TestCategory?> GetByNameAsync(string name)
+        {
+            return await _dbcontext.TestCategories.FirstOrDefaultAsync(c => c.Name == name);
+        }
         public async Task AddAsync(TestCategory category)
         {
             await _dbcontext.TestCategories.AddAsync(category);

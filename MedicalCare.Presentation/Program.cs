@@ -1,4 +1,5 @@
 using MedicalCare.Application.Features.TestCategories;
+using MedicalCare.Application.Features.Tests;
 using MedicalCare.Infrastructure;
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,10 @@ builder.Services.AddScoped<CreateTestCategoryHandler>();
 builder.Services.AddScoped<UpdateTestCategoryHandler>();
 builder.Services.AddScoped<GetAllTestCategoriesHandler>();
 builder.Services.AddScoped<ToggleTestCategoryStatusHandler>();
+builder.Services.AddScoped<CreateTestHandler>();
+builder.Services.AddScoped<UpdateTestHandler>();
+builder.Services.AddScoped<GetAllTestsHandler>();
+builder.Services.AddScoped<ToggleTestStatusHandler>();
 
 var app = builder.Build();
 

@@ -11,7 +11,8 @@
         public decimal Price { get; set; }
         public int DurationInMinutes { get; set; }
         public bool IsActive { get; set; }
-        public DateTime CreatedOn { get; set; }
+        public DateTime? CreatedOn { get; set; }
+        public DateTime? UpdatedOn { get; set; }
 
     }
 }

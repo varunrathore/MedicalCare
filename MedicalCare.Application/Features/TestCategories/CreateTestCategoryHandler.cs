@@ -12,6 +12,16 @@ namespace MedicalCare.Application.Features.TestCategories
         }
         public async Task HandleAsync(CreateTestCategoryCommand command)
         {
+            if(string.IsNullOrWhiteSpace(command.Name))
+                throw new ArgumentException("Category name cannot be empty");
+
+            if(command.Name.Length < 3)
+                throw new AggregateException("Category name must be at least 3 characters long");
+
+            var existingCategory = await _repository.GetByNameAsync(command.Name);
+            if (existingCategory != null)
+                throw new InvalidOperationException("A category with the same name already exists");
+
             var category = new TestCategory
             {
                 Id = Guid.NewGuid(),

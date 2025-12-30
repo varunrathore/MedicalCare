@@ -48,23 +48,30 @@ namespace MedicalCare.Presentation.Controllers.Admin
         [HttpPost]
         public async Task<IActionResult> Save(TestCategoryModalVm vm)
         {
-            if (!ModelState.IsValid)
+            try
+            {
+                if (!ModelState.IsValid)
                 return BadRequest();
 
-            if (vm.IsEdit)
-            {
-                await _updateHandler.Handle(new UpdateTestCategoryCommand {
-                    Id = vm.Id!.Value,
-                    Name = vm.Name
-                });
-            } else
-            {
-                await _handler.HandleAsync(new CreateTestCategoryCommand
+                if (vm.IsEdit)
                 {
-                    Name = vm.Name
-                });
+                    await _updateHandler.HandleAsync(new UpdateTestCategoryCommand {
+                        Id = vm.Id!.Value,
+                        Name = vm.Name
+                    });
+                } else
+                {
+                    await _handler.HandleAsync(new CreateTestCategoryCommand
+                    {
+                        Name = vm.Name
+                    });
+                }
+                return Ok();
             }
-            return Ok();
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         public async Task<IActionResult> ToggleStatus(Guid id)
         {

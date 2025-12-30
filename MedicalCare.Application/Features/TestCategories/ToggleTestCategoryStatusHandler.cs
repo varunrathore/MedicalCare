@@ -1,16 +1,11 @@
 ﻿using MedicalCare.Application.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MedicalCare.Application.Features.TestCategories
 {
     public class ToggleTestCategoryStatusHandler
     {
-        private readonly ITestCategoryRepository _repository;
-        public ToggleTestCategoryStatusHandler(ITestCategoryRepository repository)
+        private readonly ITestRepository _repository;
+        public ToggleTestCategoryStatusHandler(ITestRepository repository)
         {
             _repository = repository;
         }

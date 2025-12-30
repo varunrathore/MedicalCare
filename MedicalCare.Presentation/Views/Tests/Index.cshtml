@@ -4,6 +4,8 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
+@model List<MedicalCare.Domain.Entities.Test>
+
 <div class="content-wrapper">
     <div class="row">
         <div class="col-lg-12 grid-margin stretch-card">
@@ -11,9 +13,9 @@
                 <div class="card-body">
                     <h4 class="card-title">Striped Table</h4>
                     <div class="card-description text-end">
-                        <a class="btn btn-primary" href="~/Admin/Tests/Create">
+                        <button class="btn btn-primary" onclick="openCreateModal()">
                             + Add Test
-                        </a>
+                        </button>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-striped">
@@ -27,19 +29,71 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td class="py-1">CBC</td>
-                                    <td> Blood </td>
-                                    <td>$ 77.99</td>
-                                    <td> 1 Hour 30min </td>
-                                    <td><label class="badge badge-danger">Pending</label></td>
-                                </tr>
+                                @foreach(var test in Model)
+                                {
+                                    <tr>
+                                        <td class="py-1">@test.Name</td>
+                                        <td> @test.Category </td>
+                                        <td>$ @test.Price </td>
+                                        <td>
+                                            @{
+                                                var h = test.DurationInMinutes / 60;
+                                                var m = test.DurationInMinutes % 60;
+                                            }
+                                            @(h > 0 ? $"{h} hr {m} min" : $"{m} min")
+                                        </td>
+                                        <td><label class="badge badge-danger">Pending</label></td>
+                                    </tr>
+                                }
                             </tbody>
                         </table>
+                        <div id="modalContainer"></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<script>
+    function openCreateModal() {
+        $.get('/Admin/Tests/Create', function (html) {
+            showModal(html);
+            bindForm('/Admin/Tests/Save');
+        });
+    }
+    function openEditModal(id, name, price, durationInMinutes) {
+        $.get(`/Admin/Tests/Edit?id=${id}&name=${name}&name=${price}&name=${durationInMinutes}`, function (html) {
+            showModal(html);
+            bindForm('/Admin/Tests/Save');
+        });
+    }
+    function bindForm(url) {
+        $('#categoryForm').submit(function (e) {
+            e.preventDefault();
+
+            $.post(url, $(this).serialize())
+            .done(function () {
+                location.reload();
+            })
+            .fail(function (xhr) {
+                alert(xhr.responseText); // simple & effective
+            });
+        });
+    }
+    function showModal(html) {
+        // Remove any existing modal & backdrop
+        $('.modal').remove();
+        $('.modal-backdrop').remove();
+
+        $('#modalContainer').html(html);
+
+        const modalEl = document.getElementById('categoryModalUnique');
+        const modal = new bootstrap.Modal(modalEl, {
+            backdrop: 'static',
+            keyboard: false
+        });
+
+        modal.show();
+    }
+</script>
 

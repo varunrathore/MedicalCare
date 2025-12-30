@@ -18,6 +18,7 @@ namespace MedicalCare.Infrastructure
                 options.UseSqlServer(connectionString);
             });
             services.AddScoped<ITestCategoryRepository, TestCategoryRepository>();
+            services.AddScoped<ITestRepository, TestRepository>();
         }
     }
 }
