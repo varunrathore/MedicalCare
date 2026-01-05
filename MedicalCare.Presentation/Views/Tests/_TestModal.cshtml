@@ -3,17 +3,50 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">@(Model.IsEdit ? "Edit Category" : "Add Category")</h1>
+                <h1 class="modal-title fs-5" id="exampleModalLabel">@(Model.IsEdit ? "Edit Test" : "Add Test")</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="categoryForm">
                 <div class="modal-body">
                     <input type="hidden" name="Id" value="@Model.Id" />
-                    <input type="text"
-                            name="Name"
-                            class="form-control"
-                            placeholder="Category Name"
-                            value="@Model.Name" />
+                    <div class="form-group">
+                        <label>Test Name</label>
+                        <input type="text"
+                                name="Name"
+                                class="form-control"
+                                placeholder="Test Name"
+                                value="@Model.Name" />
+                    </div>
+                    <div class="form-group">
+                        <label>Test Details</label>
+                        <input type="text"
+                                name="Price"
+                                class="form-control"
+                                placeholder="Test Price"
+                                value="@(Model.Price == 0 ? "" : Model.Price.ToString())" />
+                    </div>
+                    <div class="form-group">
+                        <label>Test Duration (in minutes)</label>
+                        <input type="text"
+                                name="DurationInMinutes"
+                                class="form-control"
+                                placeholder="Test Duration (minutes)"
+                                value="@(Model.DurationInMinutes == 0 ? "" : Model.DurationInMinutes.ToString())" />
+                                </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select name="CategoryId" class="form-control">
+                            <option value="">-- Select Category --</option>
+
+                            @foreach (var cat in Model.Categories)
+                            {
+                                <option value="@cat.Id"
+                                        selected="@(cat.Id == Model.CategoryId)">
+                                    @cat.Name
+                                </option>
+                            }
+                        </select> 
+                    </div>             
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

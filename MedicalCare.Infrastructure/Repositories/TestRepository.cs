@@ -17,6 +17,13 @@ namespace MedicalCare.Infrastructure.Repositories
         { 
             return await _dbcontext.Tests.ToListAsync();
         }
+        public async Task<List<Test>> GetAllWithCategoryAsync()
+        {
+            return await _dbcontext.Tests
+                .Include(x => x.Category)
+                .ToListAsync();
+        }
+
         public async Task<Test?> GetByIdAsync(Guid id)
         {
             return await _dbcontext.Tests.FindAsync(id);

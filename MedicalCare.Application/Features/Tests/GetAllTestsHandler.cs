@@ -12,7 +12,7 @@ namespace MedicalCare.Application.Features.Tests
         }
         public async Task<List<Test>> HandleAsync()
         {
-            return await _repository.GetAllAsync();
+            return await _repository.GetAllWithCategoryAsync();
         }
     }
 }

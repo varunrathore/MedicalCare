@@ -4,8 +4,8 @@ namespace MedicalCare.Application.Features.TestCategories
 {
     public class ToggleTestCategoryStatusHandler
     {
-        private readonly ITestRepository _repository;
-        public ToggleTestCategoryStatusHandler(ITestRepository repository)
+        private readonly ITestCategoryRepository _repository;
+        public ToggleTestCategoryStatusHandler(ITestCategoryRepository repository)
         {
             _repository = repository;
         }

@@ -3,15 +3,27 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - DotNetWebsite</title>
+    @* <title>@ViewData["Title"] - DotNetWebsite</title> *@
+    <title>HealthCheck | Book Lab Tests Online</title>
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     @* <link rel="stylesheet" href="~/DotNetWebsite.styles.css" asp-append-version="true" /> *@
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .hero-section {
+            background: linear-gradient(rgba(13, 110, 253, 0.05), rgba(13, 110, 253, 0.05)), url('~/images/hero-bg.jpg') no-repeat center center;
+            background-size: cover;
+            padding: 100px 0;
+        }
+        .test-card { transition: transform 0.3s; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .test-card:hover { transform: translateY(-10px); }
+        .category-icon { width: 60px; height: 60px; background: #e7f1ff; color: #0d6efd; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin-bottom: 15px; }
+    </style>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        @* <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="WebsiteHome" asp-action="Index">DotNetWebsite</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -29,6 +41,22 @@
                     </ul>
                 </div>
             </div>
+        </nav> *@
+        <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm">
+            <div class="container">
+                <a class="navbar-brand fw-bold text-primary" href="#">Medical<span class="text-dark">CARE</span></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#categories">Categories</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#tests">Popular Tests</a></li>
+                        <li class="nav-item"><a class="btn btn-primary ms-lg-3" href="~/Admin/Dashboard/Index">Admin Login</a></li>
+                    </ul>
+                </div>
+            </div>
         </nav>
     </header>
     <div class="container">
@@ -37,9 +65,9 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - DotNetWebsite - <a asp-area="" asp-controller="WebsiteHome" asp-action="Privacy">Privacy</a>
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2026 HealthCheck Medical Systems. All rights reserved.</p>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

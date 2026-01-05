@@ -33,8 +33,8 @@
                                         <td class="py-1">@category.Name</td>
                                         <td> @(category.IsActive ? "Active" : "Inactive") </td>
                                         <td>
-                                            <button class="btn btn-sm btn-warning" onclick="openEditModal('@category.Id','@category.Name')">Edit</button> |
-                                            <a class="@(category.IsActive ? "btn btn-sm btn-danger" : "btn btn-sm btn-success")" asp-action="ToggleStatus" asp-route-id="@category.Id">
+                                            <button class="badge badge-warning" onclick="openEditModal('@category.Id','@category.Name')">Edit</button> |
+                                            <a class="@(category.IsActive ? "badge badge-danger" : "badge badge-success") text-decoration-none" asp-action="ToggleStatus" asp-route-id="@category.Id">
                                                 @(category.IsActive ? "Disable" : "Enable")
                                             </a>
                                         </td>

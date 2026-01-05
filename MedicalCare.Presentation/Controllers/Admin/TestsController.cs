@@ -1,6 +1,7 @@
 ﻿using MedicalCare.Application.Features.Tests;
 using MedicalCare.Presentation.ViewModels.Admin;
 using Microsoft.AspNetCore.Mvc;
+using MedicalCare.Application.Interfaces;
 
 namespace MedicalCare.Presentation.Controllers.Admin
 {
@@ -11,17 +12,23 @@ namespace MedicalCare.Presentation.Controllers.Admin
         private readonly GetAllTestsHandler _getAllHandler;
         private readonly UpdateTestHandler _updateHandler;
         private readonly ToggleTestStatusHandler _toggleHandler;
+        private readonly ITestRepository _testRepository;
+        private readonly ITestCategoryRepository _testCategoryRepository;
 
         public TestsController(
             CreateTestHandler createHandler,
             UpdateTestHandler updateHandler,
             GetAllTestsHandler getAllHandler,
-            ToggleTestStatusHandler toggleHandler)
+            ToggleTestStatusHandler toggleHandler,
+            ITestRepository testRepository,
+            ITestCategoryRepository testCategoryRepository)
         {
             _createHandler = createHandler;
             _getAllHandler = getAllHandler;
             _updateHandler = updateHandler;
             _toggleHandler = toggleHandler;
+            _testCategoryRepository = testCategoryRepository;
+            _testRepository = testRepository;
         }
 
         public async Task<IActionResult> Index()
@@ -29,19 +36,30 @@ namespace MedicalCare.Presentation.Controllers.Admin
             var tests = await _getAllHandler.HandleAsync();
             return View(tests);
         }
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return PartialView("_TestModal", new TestModalVm());
+            var categories =  await _testCategoryRepository.GetAllAsync();
+            var vm = new TestModalVm
+            {
+                Categories = categories
+            };
+            return PartialView("_TestModal", vm);
         }
-        public IActionResult Edit(Guid id, string name, decimal price, int durationInMinutes)
+        public async Task<IActionResult> Edit(Guid id)
         {
-            return PartialView("_TestModal", new TestModalVm
+            var test = await _testRepository.GetByIdAsync(id);
+            var categories = await _testCategoryRepository.GetAllAsync();
+
+            var vm = new TestModalVm
             {
                 Id = id,
-                Name = name,
-                Price = price,
-                DurationInMinutes = durationInMinutes
-            });
+                Name = test.Name,
+                Price = test.Price,
+                DurationInMinutes = test.DurationInMinutes,
+                CategoryId = test.CategoryId,
+                Categories = categories
+            };
+            return PartialView("_TestModal", vm);
         }
         public  async Task<IActionResult> Save(TestModalVm vm)
         {
@@ -57,7 +75,8 @@ namespace MedicalCare.Presentation.Controllers.Admin
                         Id = vm.Id!.Value,
                         Name = vm.Name,
                         Price = vm.Price,
-                        DurationInMinutes = vm.DurationInMinutes
+                        DurationInMinutes = vm.DurationInMinutes,
+                        CategoryId = vm.CategoryId
                     });
                 }
                 else
@@ -66,7 +85,8 @@ namespace MedicalCare.Presentation.Controllers.Admin
                     {
                         Name = vm.Name,
                         Price = vm.Price,
-                        DurationInMinutes = vm.DurationInMinutes
+                        DurationInMinutes = vm.DurationInMinutes,
+                        CategoryId = vm.CategoryId
                     });
 
                 }
@@ -86,7 +106,7 @@ namespace MedicalCare.Presentation.Controllers.Admin
                 {
                     Id = id
                 });
-                return Ok();
+                return RedirectToAction("Index");
             }
             catch (Exception ex)
             {

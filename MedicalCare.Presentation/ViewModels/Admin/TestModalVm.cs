@@ -1,12 +1,14 @@
-﻿namespace MedicalCare.Presentation.ViewModels.Admin
+﻿using MedicalCare.Domain.Entities;
+namespace MedicalCare.Presentation.ViewModels.Admin
 {
     public class TestModalVm
     {
         public Guid? Id { get; set; }   // null = Create, value = Edit
         public string Name { get; set; } = string.Empty;
-        public decimal Price { get; set; }
+        public decimal Price { get; set; } 
         public int DurationInMinutes { get; set; }
-
+        public Guid CategoryId { get; set; }
+        public List<TestCategory> Categories { get; set; } = new();
         public bool IsEdit => Id.HasValue;
     }
 }

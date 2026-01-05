@@ -1,8 +1,81 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿<section class="hero-section text-center text-lg-start" id="home">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="display-4 fw-bold mb-3">Book Your <span class="text-primary">Medical Tests</span> From Home</h1>
+                    <p class="lead mb-4">Get accurate results from certified labs. Free home sample collection for all major health packages.</p>
+                    <div class="d-flex gap-3 justify-content-center justify-content-lg-start">
+                        <a href="#tests" class="btn btn-primary btn-lg px-4">Book a Test</a>
+                        <a href="#categories" class="btn btn-outline-primary btn-lg px-4">View Categories</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+    <section class="py-5" id="categories">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold">Browse by Category</h2>
+                <p class="text-muted">Find the right test for your health needs</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-6 col-md-3 col-lg-2 text-center">
+                    <div class="category-icon mx-auto"><i class="fa-solid fa-droplet fa-lg"></i></div>
+                    <h6>Blood Test</h6>
+                </div>
+                <div class="col-6 col-md-3 col-lg-2 text-center">
+                    <div class="category-icon mx-auto"><i class="fa-solid fa-heart-pulse fa-lg"></i></div>
+                    <h6>Heart Care</h6>
+                </div>
+                <div class="col-6 col-md-3 col-lg-2 text-center">
+                    <div class="category-icon mx-auto"><i class="fa-solid fa-bed fa-lg"></i></div>
+                    <h6>Diabetes</h6>
+                </div>
+                <div class="col-6 col-md-3 col-lg-2 text-center">
+                    <div class="category-icon mx-auto"><i class="fa-solid fa-microscope fa-lg"></i></div>
+                    <h6>Full Body</h6>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5 bg-light" id="tests">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-end mb-4">
+                <div>
+                    <h2 class="fw-bold">Popular Health Tests</h2>
+                    <p class="text-muted mb-0">Most booked tests by our patients</p>
+                </div>
+                <a href="#" class="text-decoration-none">View All <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card h-100 test-card p-3">
+                        <div class="card-body">
+                            <span class="badge bg-soft-primary text-primary mb-2" style="background: #e7f1ff;">Diabetes</span>
+                            <h5 class="card-title fw-bold">HbA1c (Glycated Hemoglobin)</h5>
+                            <p class="text-muted small">Measures average blood sugar levels over 3 months.</p>
+                            <div class="d-flex justify-content-between align-items-center mt-4">
+                                <span class="h5 mb-0 fw-bold">₹450</span>
+                                <button class="btn btn-outline-primary btn-sm px-3">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 test-card p-3">
+                        <div class="card-body">
+                            <span class="badge bg-soft-success text-success mb-2" style="background: #e8f5e9;">Blood Test</span>
+                            <h5 class="card-title fw-bold">CBC (Complete Blood Count)</h5>
+                            <p class="text-muted small">Includes Hemoglobin, Platelets, and WBC count.</p>
+                            <div class="d-flex justify-content-between align-items-center mt-4">
+                                <span class="h5 mb-0 fw-bold">₹300</span>
+                                <button class="btn btn-outline-primary btn-sm px-3">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
