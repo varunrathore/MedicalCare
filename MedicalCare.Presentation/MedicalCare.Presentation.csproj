@@ -15,4 +15,9 @@
     <ProjectReference Include="..\MedicalCare.Infrastructure\MedicalCare.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\Admin\Home\IndexOld.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Admin\_ViewStart.cshtml" />
+  </ItemGroup>
+
 </Project>

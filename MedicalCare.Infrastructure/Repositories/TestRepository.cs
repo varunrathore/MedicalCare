@@ -7,41 +7,41 @@ namespace MedicalCare.Infrastructure.Repositories
 {
     public class TestRepository : ITestRepository
     {
-        private readonly ApplicationDbContext _dbcontext;
-        public TestRepository(ApplicationDbContext dbcontext)
+        private readonly ApplicationDbContext _context;
+        public TestRepository(ApplicationDbContext context)
         {
-            _dbcontext = dbcontext;
+            _context = context;
         }
 
         public async Task<List<Test>> GetAllAsync()
         { 
-            return await _dbcontext.Tests.ToListAsync();
+            return await _context.Tests.ToListAsync();
         }
         public async Task<List<Test>> GetAllWithCategoryAsync()
         {
-            return await _dbcontext.Tests
+            return await _context.Tests
                 .Include(x => x.Category)
                 .ToListAsync();
         }
 
         public async Task<Test?> GetByIdAsync(Guid id)
         {
-            return await _dbcontext.Tests.FindAsync(id);
+            return await _context.Tests.FindAsync(id);
         }
         public async Task<Test?> GetByNameAsync(string name)
         {
-            return await _dbcontext.Tests.FirstOrDefaultAsync(t => t.Name == name);
+            return await _context.Tests.FirstOrDefaultAsync(t => t.Name == name);
         }
-        public async Task AddAsync(Test Test)
+        public async Task AddAsync(Test test)
         {
-            await _dbcontext.Tests.AddAsync(Test);
-            await _dbcontext.SaveChangesAsync();
+            await _context.Tests.AddAsync(test);
+            await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(Test Test)
+        public async Task UpdateAsync(Test test)
         {
-            _dbcontext.Tests.Update(Test);
-            await _dbcontext.SaveChangesAsync();
+            _context.Tests.Update(test);
+            await _context.SaveChangesAsync();
         }
     }
 }

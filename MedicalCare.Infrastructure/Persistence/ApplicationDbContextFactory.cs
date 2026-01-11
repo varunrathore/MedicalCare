@@ -8,7 +8,7 @@ public class ApplicationDbContextFactory
     public ApplicationDbContext CreateDbContext(string[] args)
     {
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=MedicalCareDB;Trusted_Connection=True;MultipleActiveResultSets=true")
+            .UseSqlServer("Server=localhost,1433;Database=MedicalCareDb;User Id=sa;Password=StrongPass@123;TrustServerCertificate=True;")
             .Options;
 
         return new ApplicationDbContext(options);

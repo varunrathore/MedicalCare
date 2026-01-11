@@ -1,6 +1,7 @@
 ﻿using MedicalCare.Application.Features.TestCategories;
 using MedicalCare.Presentation.ViewModels.Admin;
 using Microsoft.AspNetCore.Mvc;
+using MedicalCare.Application.Interfaces;
 
 namespace MedicalCare.Presentation.Controllers.Admin
 {
@@ -12,17 +13,20 @@ namespace MedicalCare.Presentation.Controllers.Admin
         private readonly GetAllTestCategoriesHandler _getAllHandler;
         private readonly UpdateTestCategoryHandler _updateHandler;
         private readonly ToggleTestCategoryStatusHandler _toggleHandler;
+        private readonly ITestCategoryRepository _testCategoryRepository;
 
         public TestCategoryController(
             CreateTestCategoryHandler handler,
             UpdateTestCategoryHandler updateHandler,
             GetAllTestCategoriesHandler getAllHandler,
-            ToggleTestCategoryStatusHandler toggleHandler)
+            ToggleTestCategoryStatusHandler toggleHandler,
+            ITestCategoryRepository testCategoryRepository)
         {
             _handler = handler;
             _getAllHandler = getAllHandler;
             _updateHandler = updateHandler;
             _toggleHandler = toggleHandler;
+            _testCategoryRepository = testCategoryRepository;
         }
         
         public async Task<IActionResult> Index()
@@ -37,12 +41,16 @@ namespace MedicalCare.Presentation.Controllers.Admin
         }
 
         [HttpGet]
-        public IActionResult Edit(Guid id, string name)
+        public async Task<IActionResult> Edit(Guid id, string name)
         {
+            var category = await _testCategoryRepository.GetByIdAsync(id);
             return PartialView("_CategoryModal", new TestCategoryModalVm
             {
                 Id = id,
-                Name = name
+                Name = name,
+                IsActive = category.IsActive,
+                IsSystemCategory = category.IsSystem()
+
             });
         }
         [HttpPost]
@@ -51,7 +59,7 @@ namespace MedicalCare.Presentation.Controllers.Admin
             try
             {
                 if (!ModelState.IsValid)
-                return BadRequest();
+                    return BadRequest();
 
                 if (vm.IsEdit)
                 {

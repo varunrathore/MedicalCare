@@ -1,15 +1,14 @@
 using MedicalCare.Application.Features.TestCategories;
 using MedicalCare.Application.Features.Tests;
 using MedicalCare.Infrastructure;
-using MedicalCare.Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddInfrastructureServices(builder.Configuration);
+
 builder.Services.AddScoped<CreateTestCategoryHandler>();
 builder.Services.AddScoped<UpdateTestCategoryHandler>();
 builder.Services.AddScoped<GetAllTestCategoriesHandler>();
@@ -48,13 +47,5 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=WebsiteHome}/{action=Index}/{id?}")
     .WithStaticAssets();
-
-
-// Apply any pending EF Core migrations at startup
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    db.Database.Migrate();
-}
 
 app.Run();

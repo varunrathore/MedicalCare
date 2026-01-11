@@ -13,7 +13,7 @@
                             name="Name"
                             class="form-control"
                             placeholder="Category Name"
-                            value="@Model.Name" />
+                            value="@Model.Name" @(Model.IsSystemCategory ? "disabled" : "") />
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
