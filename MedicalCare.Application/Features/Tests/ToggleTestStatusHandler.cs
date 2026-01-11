@@ -1,6 +1,5 @@
 ﻿using MedicalCare.Application.Interfaces;
 
-
 namespace MedicalCare.Application.Features.Tests
 {
     public class ToggleTestStatusHandler
