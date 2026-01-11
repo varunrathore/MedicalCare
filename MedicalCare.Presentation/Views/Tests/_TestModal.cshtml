@@ -12,27 +12,11 @@
                     <div class="form-group">
                         <label>Test Name</label>
                         <input type="text"
-                                name="Name"
-                                class="form-control"
-                                placeholder="Test Name"
-                                value="@Model.Name" />
+                               name="Name"
+                               class="form-control"
+                               placeholder="Test Name"
+                               value="@Model.Name" />
                     </div>
-                    <div class="form-group">
-                        <label>Test Details</label>
-                        <input type="text"
-                                name="Price"
-                                class="form-control"
-                                placeholder="Test Price"
-                                value="@(Model.Price == 0 ? "" : Model.Price.ToString())" />
-                    </div>
-                    <div class="form-group">
-                        <label>Test Duration (in minutes)</label>
-                        <input type="text"
-                                name="DurationInMinutes"
-                                class="form-control"
-                                placeholder="Test Duration (minutes)"
-                                value="@(Model.DurationInMinutes == 0 ? "" : Model.DurationInMinutes.ToString())" />
-                                </div>
                     <div class="form-group">
                         <label>Category</label>
                         <select name="CategoryId" class="form-control">
@@ -46,7 +30,23 @@
                                 </option>
                             }
                         </select> 
-                    </div>             
+                    </div>  
+                    <div class="form-group">
+                        <label>Test Details</label>
+                        <input type="text"
+                                name="Price"
+                                class="form-control"
+                                placeholder="Test Price"
+                                value="@(Model.Price == 0 ? "" : Model.Price.ToString())" />
+                    </div>
+                    <div class="form-group">
+                        <label>Test Duration (in minutes)</label>
+                        <input type="text"
+                               name="DurationInMinutes"
+                               class="form-control"
+                               placeholder="Test Duration (minutes)"
+                               value="@(Model.DurationInMinutes == 0 ? "" : Model.DurationInMinutes.ToString())" />
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

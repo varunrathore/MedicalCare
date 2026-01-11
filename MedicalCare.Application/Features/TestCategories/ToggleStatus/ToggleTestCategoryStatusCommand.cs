@@ -1,5 +1,5 @@
 ﻿
-namespace MedicalCare.Application.Features.TestCategories
+namespace MedicalCare.Application.Features.TestCategories.ToggleStatus
 {
     public class ToggleTestCategoryStatusCommand
     {

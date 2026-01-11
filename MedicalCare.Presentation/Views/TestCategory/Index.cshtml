@@ -38,21 +38,21 @@
                                         <td> @(category.IsActive ? "Active" : "Inactive") </td>
                                         <td>
                                             <button class="badge badge-warning" onclick="openEditModal('@category.Id','@category.Name')">Edit</button> |
-                                            @if (category.IsSystem())
-                                                {
-                                                    <a class="@(category.IsActive ? "badge badge-danger" : "badge badge-success") text-decoration-none"
-                                                    href="javascript:void(0);"
-                                                    title="System category cannot be changed">
-                                                        @(category.IsActive ? "Disable" : "Enable")
-                                                    </a>
-                                                    <span class="badge bg-secondary ms-2">System</span>
-                                                }
-                                                else
-                                                {
+                                            @* @if (category.IsSystem()) *@
+                                            @*     { *@
+                                            @*         <a class="@(category.IsActive ? "badge badge-danger" : "badge badge-success") text-decoration-none" *@
+                                            @*         href="javascript:void(0);" *@
+                                            @*         title="System category cannot be changed"> *@
+                                            @*             @(category.IsActive ? "Disable" : "Enable") *@
+                                            @*         </a> *@
+                                            @*         <span class="badge bg-secondary ms-2">System</span> *@
+                                            @*     } *@
+                                            @*     else *@
+                                            @*     { *@
                                                     <a class="@(category.IsActive ? "badge badge-danger" : "badge badge-success") text-decoration-none" asp-action="ToggleStatus" asp-route-id="@category.Id" >
                                                         @(category.IsActive ? "Disable" : "Enable")
                                                     </a>
-                                                }
+                                                @* } *@
                                         </td>
                                     </tr>
 

@@ -1,7 +1,7 @@
 ﻿using MedicalCare.Application.Interfaces;
 using MedicalCare.Domain.Entities;
 
-namespace MedicalCare.Application.Features.TestCategories
+namespace MedicalCare.Application.Features.TestCategories.Queries
 {
     public class GetAllTestCategoriesHandler
     {

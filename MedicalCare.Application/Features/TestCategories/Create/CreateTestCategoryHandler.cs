@@ -1,26 +1,27 @@
-﻿using MedicalCare.Application.Interfaces;
+﻿using FluentValidation;
+using MedicalCare.Application.Interfaces;
 using MedicalCare.Domain.Entities;
 
-namespace MedicalCare.Application.Features.TestCategories
+namespace MedicalCare.Application.Features.TestCategories.Create
 {
     public class CreateTestCategoryHandler
     {
         private readonly ITestCategoryRepository _repository;
-        public CreateTestCategoryHandler(ITestCategoryRepository repository)
+        private readonly IValidator<CreateTestCategoryCommand> _validator;
+        public CreateTestCategoryHandler(ITestCategoryRepository repository, IValidator<CreateTestCategoryCommand> validator)
         {
             _repository = repository;
+            _validator = validator;
         }
         public async Task HandleAsync(CreateTestCategoryCommand command)
         {
-            if(string.IsNullOrWhiteSpace(command.Name))
-                throw new ArgumentException("Category name cannot be empty");
-
-            if(command.Name.Length < 3)
-                throw new AggregateException("Category name must be at least 3 characters long");
-
+            var result = await _validator.ValidateAsync(command);
+            if(!result.IsValid)
+                throw new ValidationException(result.Errors);
+            
             var existingCategory = await _repository.GetByNameAsync(command.Name);
             if (existingCategory != null)
-                throw new InvalidOperationException("A category with the same name already exists");
+                throw new Exception("A category with the same name already exists");
 
             var category = new TestCategory
             {

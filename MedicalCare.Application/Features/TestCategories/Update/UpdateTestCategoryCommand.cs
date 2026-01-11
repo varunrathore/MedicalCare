@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MedicalCare.Application.Features.TestCategories
+namespace MedicalCare.Application.Features.TestCategories.Update
 {
     public class UpdateTestCategoryCommand
     {

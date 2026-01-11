@@ -1,6 +1,6 @@
 ﻿using MedicalCare.Application.Interfaces;
 
-namespace MedicalCare.Application.Features.TestCategories
+namespace MedicalCare.Application.Features.TestCategories.ToggleStatus
 {
     public class ToggleTestCategoryStatusHandler
     {
