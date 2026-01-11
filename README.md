@@ -1,108 +1,251 @@
 # MedicalCare
 
-A simple medical tests management sample built with .NET layered architecture.
+A medical tests management application built with .NET 9.0 layered architecture.
 
-## Project overview
+## Project Overview
 
-- **Purpose:** A sample application to manage medical tests and test categories.
-- **Layers:** Clear separation between Presentation (web), Application (use-cases), Domain (entities), and Infrastructure (EF Core, persistence).
+- **Purpose:** Manage medical tests and test categories with full CRUD operations
+- **Layers:** Clean separation between Presentation (web), Application (use-cases), Domain (entities), and Infrastructure (EF Core, persistence)
 
 ## Architecture
 
-- **Presentation:** `MedicalCare.Presentation` — ASP.NET Core MVC site, hosts controllers, views and the startup program.
-- **Application:** `MedicalCare.Application` — application services, features, and repository interfaces.
-- **Domain:** `MedicalCare.Domain` — domain entities and value objects (e.g. `Test`, `TestCategory`).
-- **Infrastructure:** `MedicalCare.Infrastructure` — EF Core DbContext, migrations, repositories and DI wiring.
+- **Presentation:** `MedicalCare.Presentation` — ASP.NET Core MVC site with controllers and views
+- **Application:** `MedicalCare.Application` — Application services, features, and repository interfaces
+- **Domain:** `MedicalCare.Domain` — Domain entities and value objects (`Test`, `TestCategory`, policies)
+- **Infrastructure:** `MedicalCare.Infrastructure` — EF Core DbContext, migrations, and repository implementations
 
-Project layout (top-level folders):
+## Tech Stack
 
-- `MedicalCare.Presentation/` — web app and `Program.cs`.
-- `MedicalCare.Application/` — business logic and interfaces.
-- `MedicalCare.Domain/` — entities and domain models.
-- `MedicalCare.Infrastructure/` — persistence, `Migrations/`, and repository implementations.
-
-## Tech stack
-
-- .NET (C#) — multi-project solution
+- .NET 9.0 SDK
 - ASP.NET Core MVC
-- Entity Framework Core (EF Core) migrations
-- SQL Server (connection string in `MedicalCare.Presentation/appsettings.json`)
-- Docker / Docker Compose (optional, `docker-compose.yml` available)
+- Entity Framework Core with migrations
+- SQL Server 2022
+- Docker & Docker Compose
 
-## Database & Migrations
+## Prerequisites
 
-Migrations are located in `MedicalCare.Infrastructure/Migrations`.
-To apply migrations locally you can either run the EF CLI or run the web app (if it applies migrations at startup).
+Choose one of the following options:
 
-Install the EF CLI if you don't have it:
+### Option 1: Docker (Recommended - Easiest)
+- [Docker Desktop](https://www.docker.com/products/docker-desktop) installed and running
 
-```bash
-dotnet tool install --global dotnet-ef
+### Option 2: Local Development
+- [.NET 9.0 SDK](https://dotnet.microsoft.com/download/dotnet/9.0) installed
+- SQL Server 2022 (local instance or Docker container)
+- EF Core CLI tools
+
+## Quick Start with Docker (Recommended)
+
+This is the easiest way to run the application. Docker Compose will automatically set up both the database and the application.
+
+1. **Clone the repository:**
+   ```bash
+   git clone <repository-url>
+   cd MedicalCare
+   ```
+
+2. **Start the application:**
+   ```bash
+   docker-compose up --build
+   ```
+
+3. **Access the application:**
+   - Open your browser to `http://localhost:8080`
+   - The database will be automatically created and seeded with test categories
+
+4. **Stop the application:**
+   ```bash
+   docker-compose down
+   ```
+
+   To remove database data as well:
+   ```bash
+   docker-compose down -v
+   ```
+
+## Local Development Setup
+
+### Step 1: Install Prerequisites
+
+1. **Install .NET 9.0 SDK:**
+   ```bash
+   dotnet --version  # Should show 9.0.x
+   ```
+
+2. **Install EF Core CLI tools:**
+   ```bash
+   dotnet tool install --global dotnet-ef
+   dotnet ef --version
+   ```
+
+3. **Set up SQL Server:**
+
+   Using Docker:
+   ```bash
+   docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=StrongPass@123" \
+     -p 1433:1433 --name medicalcare-sql \
+     -d mcr.microsoft.com/mssql/server:2022-latest
+   ```
+
+### Step 2: Configure Database Connection
+
+The default connection string in `MedicalCare.Presentation/appsettings.json`:
+```json
+"ConnectionStrings": {
+  "DefaultConnection": "Server=localhost,1433;Database=MedicalCareDb;User Id=sa;Password=StrongPass@123;TrustServerCertificate=True;"
+}
 ```
 
-From the repository root, apply migrations with:
+**Important:** If using a different SQL Server instance, update the connection string accordingly.
+
+### Step 3: Apply Database Migrations
+
+From the repository root:
 
 ```bash
+# Restore dependencies
 dotnet restore
+
+# Build the solution
 dotnet build
+
+# Apply migrations (creates database and seeds data)
 dotnet ef database update --project MedicalCare.Infrastructure --startup-project MedicalCare.Presentation
 ```
 
-- `--project` points to the project containing migrations.
-- `--startup-project` points to the project that provides the application services & configuration (usually the Presentation project).
-
-Connection string is configured in `MedicalCare.Presentation/appsettings.json` under `ConnectionStrings:DefaultConnection`.
-
-## Run locally (dotnet CLI)
-
-1. Ensure you have the .NET SDK installed (recommended latest 6/7/8 depending on the solution target).
-2. Ensure an accessible SQL Server instance is running (local or container) matching the connection string in `appsettings.json`.
-
-Commands to restore, build and run the Presentation project:
+### Step 4: Run the Application
 
 ```bash
-dotnet restore
-dotnet build
 dotnet run --project MedicalCare.Presentation
 ```
 
-The app will start on the configured Kestrel ports (see `Properties/launchSettings.json` or console output).
+The application will start on `http://localhost:5000` or `https://localhost:5001` (check console output for exact URLs).
 
-## Run with Docker Compose
+## Database Migrations
 
-If you prefer containerized local development, use the provided `docker-compose.yml` to start services (including DB) and the app:
+Migrations are located in `MedicalCare.Infrastructure/Migrations/` and include:
+- Initial schema creation
+- Test categories seeding (added Jan 2026)
+
+### Common Migration Commands
 
 ```bash
+# Apply all pending migrations
+dotnet ef database update --project MedicalCare.Infrastructure --startup-project MedicalCare.Presentation
+
+# Create a new migration
+dotnet ef migrations add MigrationName --project MedicalCare.Infrastructure --startup-project MedicalCare.Presentation
+
+# Rollback to a specific migration
+dotnet ef database update PreviousMigrationName --project MedicalCare.Infrastructure --startup-project MedicalCare.Presentation
+```
+
+## Troubleshooting
+
+### Docker Issues
+
+**Problem:** Port 1433 or 8080 already in use
+```bash
+# Find and stop conflicting services
+docker ps
+docker stop <container-id>
+
+# Or use different ports in docker-compose.yml
+```
+
+**Problem:** Docker build fails
+```bash
+# Clean Docker cache and rebuild
+docker-compose down -v
+docker system prune -a
 docker-compose up --build
 ```
 
-Check `docker-compose.yml` and `MedicalCare.Presentation/appsettings.json` to confirm the SQL Server settings and ports.
+### Database Connection Issues
 
-## Notes on configuration
+**Problem:** Cannot connect to SQL Server
+- Verify SQL Server is running: `docker ps` (if using Docker)
+- Check connection string in `appsettings.json`
+- Ensure password meets SQL Server complexity requirements
+- Verify port 1433 is accessible
 
-- Sensitive values (DB passwords, secrets) should be stored in environment variables or user secrets for development.
-- The default `appsettings.json` contains an example `DefaultConnection` entry — adjust to your environment.
-
-## Tests
-
-If there are unit/integration tests in the `MedicalCare.Application` or other projects, run them with:
-
+**Problem:** Migration fails
 ```bash
-dotnet test
+# Drop and recreate database
+dotnet ef database drop --project MedicalCare.Infrastructure --startup-project MedicalCare.Presentation
+dotnet ef database update --project MedicalCare.Infrastructure --startup-project MedicalCare.Presentation
 ```
+
+### .NET Version Issues
+
+**Problem:** Wrong .NET version
+```bash
+# Check installed versions
+dotnet --list-sdks
+
+# Install .NET 9.0 from: https://dotnet.microsoft.com/download/dotnet/9.0
+```
+
+## Project Structure
+
+```
+MedicalCare/
+├── MedicalCare.Presentation/     # ASP.NET Core MVC application
+├── MedicalCare.Application/      # Business logic and interfaces
+├── MedicalCare.Domain/           # Domain entities and policies
+├── MedicalCare.Infrastructure/   # EF Core, repositories, migrations
+├── Dockerfile                    # Application container definition
+├── docker-compose.yml            # Multi-container orchestration
+└── README.md                     # This file
+```
+
+## Key Features
+
+- Medical test management (CRUD operations)
+- Test category management with seeded data
+- Clean architecture with separated concerns
+- Entity Framework Core with Code-First migrations
+- Docker support for easy deployment
+- SQL Server database with automatic schema creation
+
+## Configuration Files
+
+- `MedicalCare.Presentation/appsettings.json` — Connection strings and logging
+- `MedicalCare.Presentation/Program.cs` — Application startup and DI configuration
+- `docker-compose.yml` — Docker services configuration
+- `Dockerfile` — Multi-stage build for the application
+
+## Development Workflow
+
+1. Make code changes in your preferred IDE
+2. Create migrations if database schema changes:
+   ```bash
+   dotnet ef migrations add YourMigrationName --project MedicalCare.Infrastructure --startup-project MedicalCare.Presentation
+   ```
+3. Apply migrations:
+   ```bash
+   dotnet ef database update --project MedicalCare.Infrastructure --startup-project MedicalCare.Presentation
+   ```
+4. Test locally before committing
+
+## Security Notes
+
+- **Default password** (`StrongPass@123`) is for development only
+- Use environment variables or Azure Key Vault for production secrets
+- Configure user secrets for local development:
+  ```bash
+  dotnet user-secrets init --project MedicalCare.Presentation
+  dotnet user-secrets set "ConnectionStrings:DefaultConnection" "your-connection-string" --project MedicalCare.Presentation
+  ```
 
 ## Contributing
 
-- Fork the repo, create a feature branch, run tests, and open a pull request.
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/your-feature`)
+3. Commit your changes (`git commit -m 'Add some feature'`)
+4. Push to the branch (`git push origin feature/your-feature`)
+5. Open a Pull Request
 
-## Files to inspect
+## License
 
-- `MedicalCare.Infrastructure/Migrations/` — EF Core migrations
-- `MedicalCare.Presentation/appsettings.json` — connection strings & logging
-- `MedicalCare.Presentation/Program.cs` — application startup
-
-If you'd like, I can also:
-
-- Add a badge matrix or CI instructions.
-- Patch `Program.cs` to automatically apply migrations at startup.
-- Add a small launch/test script to simplify local runs.
+This is a sample application for educational purposes.
