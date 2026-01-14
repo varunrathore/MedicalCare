@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_WEBAPP_NAME: medicalcare-app    # Replace with your app name
+  AZURE_WEBAPP_NAME: medicalCare    # Replace with your app name
   DOTNET_VERSION: '9.0.x'
   WORKING_DIRECTORY: '.'
 

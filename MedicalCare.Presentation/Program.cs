@@ -5,6 +5,8 @@ using MedicalCare.Application.Features.TestCategories.ToggleStatus;
 using MedicalCare.Application.Features.TestCategories.Update;
 using MedicalCare.Application.Features.Tests;
 using MedicalCare.Infrastructure;
+using MedicalCare.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,5 +58,20 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=WebsiteHome}/{action=Index}/{id?}")
     .WithStaticAssets();
+
+// Apply migrations automatically at startup
+try
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        dbContext.Database.Migrate();
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Migration failed: {ex.Message}");
+    // Log error but continue app startup
+}
 
 app.Run();
