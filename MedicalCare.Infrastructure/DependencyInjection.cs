@@ -13,8 +13,10 @@ namespace MedicalCare.Infrastructure
             // Register infrastructure services here
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                // Configure your DbContext here using the configuration
-                var connectionString = configuration.GetConnectionString("DefaultConnection");
+                // Try environment variable first (Azure), then fall back to appsettings.json for local development
+                var connectionString = Environment.GetEnvironmentVariable("DefaultConnection")
+                    ?? configuration.GetConnectionString("DefaultConnection");
+                
                 options.UseSqlServer(connectionString);
             });
             services.AddScoped<ITestCategoryRepository, TestCategoryRepository>();

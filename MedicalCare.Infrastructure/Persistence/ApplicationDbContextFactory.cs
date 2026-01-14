@@ -7,8 +7,12 @@ public class ApplicationDbContextFactory
 {
     public ApplicationDbContext CreateDbContext(string[] args)
     {
+        // Read connection string from environment variable (Azure) with fallback to local default
+        var connectionString = Environment.GetEnvironmentVariable("DefaultConnection")
+            ?? "Server=localhost,1433;Database=MedicalCareDb;User Id=sa;Password=StrongPass@123;TrustServerCertificate=True;";
+
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseSqlServer("Server=localhost,1433;Database=MedicalCareDb;User Id=sa;Password=StrongPass@123;TrustServerCertificate=True;")
+            .UseSqlServer(connectionString)
             .Options;
 
         return new ApplicationDbContext(options);

@@ -238,6 +238,289 @@ MedicalCare/
   dotnet user-secrets set "ConnectionStrings:DefaultConnection" "your-connection-string" --project MedicalCare.Presentation
   ```
 
+## Deploying to Azure
+
+### Prerequisites for Azure Deployment
+
+- [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) installed
+- An active Azure subscription
+- Azure account with permissions to create resources
+
+### Option 1: Deploy Using Azure App Service (Recommended)
+
+#### Step 1: Login to Azure
+
+```bash
+az login
+az account set --subscription "your-subscription-id"
+```
+
+#### Step 2: Create Resource Group
+
+```bash
+az group create --name medicalcare-rg --location eastus
+```
+
+#### Step 3: Create Azure SQL Database
+
+```bash
+# Create SQL Server
+az sql server create \
+  --name medicalcare-sql-server \
+  --resource-group medicalcare-rg \
+  --location eastus \
+  --admin-user sqladmin \
+  --admin-password "YourStrongPassword123!"
+
+# Create SQL Database
+az sql db create \
+  --resource-group medicalcare-rg \
+  --server medicalcare-sql-server \
+  --name MedicalCareDb \
+  --service-objective S0
+
+# Configure firewall to allow Azure services
+az sql server firewall-rule create \
+  --resource-group medicalcare-rg \
+  --server medicalcare-sql-server \
+  --name AllowAzureServices \
+  --start-ip-address 0.0.0.0 \
+  --end-ip-address 0.0.0.0
+```
+
+#### Step 4: Create App Service Plan
+
+```bash
+az appservice plan create \
+  --name medicalcare-plan \
+  --resource-group medicalcare-rg \
+  --sku B1 \
+  --is-linux
+```
+
+#### Step 5: Create Web App
+
+```bash
+az webapp create \
+  --resource-group medicalcare-rg \
+  --plan medicalcare-plan \
+  --name medicalcare-app-unique123 \
+  --runtime "DOTNET:9.0"
+```
+
+#### Step 6: Configure Connection String
+
+```bash
+# Get the SQL connection string
+SQL_CONNECTION="Server=tcp:medicalcare-sql-server.database.windows.net,1433;Database=MedicalCareDb;User ID=sqladmin;Password=YourStrongPassword123!;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+
+# Set connection string in App Service
+az webapp config connection-string set \
+  --resource-group medicalcare-rg \
+  --name medicalcare-app-unique123 \
+  --connection-string-type SQLAzure \
+  --settings DefaultConnection="$SQL_CONNECTION"
+```
+
+#### Step 7: Publish the Application
+
+From your project root:
+
+```bash
+# Publish the project
+dotnet publish MedicalCare.Presentation/MedicalCare.Presentation.csproj -c Release -o ./publish
+
+# Create a deployment package
+cd publish
+zip -r ../deploy.zip .
+cd ..
+
+# Deploy to Azure
+az webapp deployment source config-zip \
+  --resource-group medicalcare-rg \
+  --name medicalcare-app-unique123 \
+  --src deploy.zip
+```
+
+#### Step 8: Apply Database Migrations
+
+You have two options:
+
+**Option A: Using connection string directly**
+```bash
+dotnet ef database update \
+  --project MedicalCare.Infrastructure \
+  --startup-project MedicalCare.Presentation \
+  --connection "Server=tcp:medicalcare-sql-server.database.windows.net,1433;Database=MedicalCareDb;User ID=sqladmin;Password=YourStrongPassword123!;Encrypt=True;TrustServerCertificate=False;"
+```
+
+**Option B: Configure automatic migrations in `Program.cs`** (see below)
+
+#### Step 9: Access Your Application
+
+```bash
+az webapp browse --resource-group medicalcare-rg --name medicalcare-app-unique123
+```
+
+Your app will be available at: `https://medicalcare-app-unique123.azurewebsites.net`
+
+### Option 2: Deploy Using Azure Container Instances
+
+#### Step 1: Build and Push Docker Image to Azure Container Registry
+
+```bash
+# Create Azure Container Registry
+az acr create \
+  --resource-group medicalcare-rg \
+  --name medicalcareacr \
+  --sku Basic
+
+# Login to ACR
+az acr login --name medicalcareacr
+
+# Build and push image
+docker build -t medicalcareacr.azurecr.io/medicalcare:latest .
+docker push medicalcareacr.azurecr.io/medicalcare:latest
+```
+
+#### Step 2: Create SQL Database (same as Option 1, Step 3)
+
+#### Step 3: Deploy Container
+
+```bash
+# Get ACR credentials
+ACR_USERNAME=$(az acr credential show --name medicalcareacr --query username -o tsv)
+ACR_PASSWORD=$(az acr credential show --name medicalcareacr --query "passwords[0].value" -o tsv)
+
+# Create container instance
+az container create \
+  --resource-group medicalcare-rg \
+  --name medicalcare-container \
+  --image medicalcareacr.azurecr.io/medicalcare:latest \
+  --dns-name-label medicalcare-unique123 \
+  --ports 8080 \
+  --registry-login-server medicalcareacr.azurecr.io \
+  --registry-username $ACR_USERNAME \
+  --registry-password $ACR_PASSWORD \
+  --environment-variables \
+    'ConnectionStrings__DefaultConnection'='Server=tcp:medicalcare-sql-server.database.windows.net,1433;Database=MedicalCareDb;User ID=sqladmin;Password=YourStrongPassword123!;Encrypt=True;TrustServerCertificate=False;'
+```
+
+### Automatic Database Migrations on Startup
+
+To automatically apply migrations when the app starts, add this to your `Program.cs`:
+
+```csharp
+// After var app = builder.Build();
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        context.Database.Migrate();
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while migrating the database.");
+    }
+}
+```
+
+### CI/CD with GitHub Actions
+
+Create `.github/workflows/azure-deploy.yml`:
+
+```yaml
+name: Deploy to Azure
+
+on:
+  push:
+    branches: [ master ]
+
+env:
+  AZURE_WEBAPP_NAME: medicalcare-app-unique123
+  DOTNET_VERSION: '9.0.x'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+
+    - name: Publish
+      run: dotnet publish MedicalCare.Presentation/MedicalCare.Presentation.csproj -c Release -o ./publish
+
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        package: ./publish
+```
+
+To set up the publish profile:
+1. Download publish profile from Azure Portal (App Service → Get publish profile)
+2. Add it as a GitHub secret named `AZURE_WEBAPP_PUBLISH_PROFILE`
+
+### Azure Deployment Checklist
+
+- [ ] Create Azure resource group
+- [ ] Create Azure SQL Database and server
+- [ ] Configure firewall rules for SQL server
+- [ ] Create App Service or Container Instance
+- [ ] Configure connection strings
+- [ ] Publish application
+- [ ] Apply database migrations
+- [ ] Test the deployed application
+- [ ] Set up custom domain (optional)
+- [ ] Configure SSL certificate (optional)
+- [ ] Set up Application Insights for monitoring (optional)
+
+### Monitoring and Logs
+
+View application logs:
+```bash
+az webapp log tail --resource-group medicalcare-rg --name medicalcare-app-unique123
+```
+
+Enable Application Insights:
+```bash
+az monitor app-insights component create \
+  --app medicalcare-insights \
+  --location eastus \
+  --resource-group medicalcare-rg
+```
+
+### Cost Estimation
+
+Typical monthly costs for a small deployment:
+- App Service (B1): ~$13/month
+- Azure SQL Database (S0): ~$15/month
+- **Total: ~$28/month**
+
+For production, consider scaling up as needed.
+
+### Cleanup Resources
+
+When done testing, remove all Azure resources:
+```bash
+az group delete --name medicalcare-rg --yes --no-wait
+```
+
 ## Contributing
 
 1. Fork the repository
