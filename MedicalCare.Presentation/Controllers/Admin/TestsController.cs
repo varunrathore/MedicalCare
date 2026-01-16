@@ -48,6 +48,9 @@ namespace MedicalCare.Presentation.Controllers.Admin
         public async Task<IActionResult> Edit(Guid id)
         {
             var test = await _testRepository.GetByIdAsync(id);
+            if (test == null)
+                return NotFound();
+
             var categories = await _testCategoryRepository.GetAllAsync();
 
             var vm = new TestModalVm

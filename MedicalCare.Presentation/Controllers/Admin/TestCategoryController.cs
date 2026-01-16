@@ -47,6 +47,9 @@ namespace MedicalCare.Presentation.Controllers.Admin
         public async Task<IActionResult> Edit(Guid id, string name)
         {
             var category = await _testCategoryRepository.GetByIdAsync(id);
+            if (category == null)
+                return NotFound();
+
             return PartialView("_CategoryModal", new TestCategoryModalVm
             {
                 Id = id,
