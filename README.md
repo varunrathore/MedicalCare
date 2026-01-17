@@ -532,3 +532,5 @@ az group delete --name medicalcare-rg --yes --no-wait
 ## License
 
 This is a sample application for educational purposes.
+
+test
