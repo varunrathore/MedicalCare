@@ -3,7 +3,9 @@ name: Build & Deploy to Azure Container Apps
 on:
   push:
     branches:
+      - master
       - main
+  workflow_dispatch:
 
 env:
   ACR_NAME: medicalcareacr
