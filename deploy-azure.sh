@@ -13,7 +13,7 @@ NC='\033[0m' # No Color
 
 # Configuration - Edit these values
 RESOURCE_GROUP="medicalcare-rg"
-LOCATION="eastus"
+LOCATION="westus2"
 SQL_SERVER_NAME="medicalcare-sql-$(date +%s)"
 SQL_ADMIN_USER="sqladmin"
 SQL_ADMIN_PASSWORD="" # Will prompt if empty

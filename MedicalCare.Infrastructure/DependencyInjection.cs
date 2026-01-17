@@ -13,9 +13,14 @@ namespace MedicalCare.Infrastructure
             // Register infrastructure services here
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                // Try environment variable first (Azure), then fall back to appsettings.json for local development
-                var connectionString = Environment.GetEnvironmentVariable("DefaultConnection")
-                    ?? configuration.GetConnectionString("DefaultConnection");
+                // ASP.NET Core automatically binds environment variables with __ to configuration
+                // ConnectionStrings__DefaultConnection environment variable maps to ConnectionStrings:DefaultConnection
+                var connectionString = configuration.GetConnectionString("DefaultConnection");
+                
+                if (string.IsNullOrEmpty(connectionString))
+                {
+                    throw new InvalidOperationException("Connection string 'DefaultConnection' is not configured.");
+                }
                 
                 options.UseSqlServer(connectionString);
             });

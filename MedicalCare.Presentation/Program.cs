@@ -1,4 +1,5 @@
 using FluentValidation;
+using FluentValidation.AspNetCore;
 using MedicalCare.Application.Features.TestCategories.Create;
 using MedicalCare.Application.Features.TestCategories.Queries;
 using MedicalCare.Application.Features.TestCategories.ToggleStatus;
@@ -6,6 +7,7 @@ using MedicalCare.Application.Features.TestCategories.Update;
 using MedicalCare.Application.Features.Tests;
 using MedicalCare.Infrastructure;
 using MedicalCare.Infrastructure.Persistence;
+using MedicalCare.Infrastructure.Persistence.Seed;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +20,9 @@ builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddValidatorsFromAssemblyContaining<
     CreateTestCategoryCommandValidator>();
 
+// Add FluentValidation automatic validation
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddFluentValidationClientsideAdapters();
 
 // Add Command Handlers
 builder.Services.AddScoped<CreateTestCategoryHandler>();
@@ -64,9 +69,11 @@ try
 {
     using (var scope = app.Services.CreateScope())
     {
-        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        dbContext.Database.Migrate();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        await db.Database.MigrateAsync();
+        await TestCategorySeeder.SeedAsync(db);
     }
+
 }
 catch (Exception ex)
 {
